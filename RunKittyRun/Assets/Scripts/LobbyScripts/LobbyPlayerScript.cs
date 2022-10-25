@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Mirror;
 using System.Linq;
+using TMPro;
 
 public class LobbyPlayerScript : NetworkBehaviour
 {
@@ -91,20 +92,20 @@ public class LobbyPlayerScript : NetworkBehaviour
             foreach (Transform childText in Player1ReadyPanel.transform)
             {
                 if (childText.name == "Player1Name")
-                    childText.GetComponent<Text>().text = "Test";
+                    childText.GetComponent<TMP_Text>().text = "Test";
                     //childText.GetComponent<Text>().text = Game.LobbyPlayers[0].PlayerName;
                 if (childText.name == "Player1ReadyText")
                 {
                     bool isPlayerReady = Game.LobbyPlayers[0].IsReady;
                     if (isPlayerReady)
                     {
-                        childText.GetComponent<Text>().text = "Ready";
-                        childText.GetComponent<Text>().color = Color.green;
+                        childText.GetComponent<TMP_Text>().text = "Ready";
+                        childText.GetComponent<TMP_Text>().color = Color.green;
                     }
                     else
                     {
-                        childText.GetComponent<Text>().text = "Not Ready";
-                        childText.GetComponent<Text>().color = Color.red;
+                        childText.GetComponent<TMP_Text>().text = "Not Ready";
+                        childText.GetComponent<TMP_Text>().color = Color.red;
                     }
                 }
             }
@@ -114,19 +115,19 @@ public class LobbyPlayerScript : NetworkBehaviour
             foreach (Transform childText in Player2ReadyPanel.transform)
             {
                 if (childText.name == "Player2Name")
-                    childText.GetComponent<Text>().text = Game.LobbyPlayers[1].PlayerName;
+                    childText.GetComponent<TMP_Text>().text = Game.LobbyPlayers[1].PlayerName;
                 if (childText.name == "Player2ReadyText")
                 {
                     bool isPlayerReady = Game.LobbyPlayers[1].IsReady;
                     if (isPlayerReady)
                     {
-                        childText.GetComponent<Text>().text = "Ready";
-                        childText.GetComponent<Text>().color = Color.green;
+                        childText.GetComponent<TMP_Text>().text = "Ready";
+                        childText.GetComponent<TMP_Text>().color = Color.green;
                     }
                     else
                     {
-                        childText.GetComponent<Text>().text = "Not Ready";
-                        childText.GetComponent<Text>().color = Color.red;
+                        childText.GetComponent<TMP_Text>().text = "Not Ready";
+                        childText.GetComponent<TMP_Text>().color = Color.red;
                     }
                 }
                 Debug.Log("Updated Player2 Ready panel with player name: " + Game.LobbyPlayers[1].PlayerName + " and ready status: " + Game.LobbyPlayers[1].IsReady);
@@ -134,12 +135,30 @@ public class LobbyPlayerScript : NetworkBehaviour
         }
         if (IsReady)
         {
-            readyButton.GetComponentInChildren<Text>().text = "Unready";
+            readyButton.GetComponentInChildren<TMP_Text>().text = "Unready";
         }
         else
         {
-            readyButton.GetComponentInChildren<Text>().text = "Ready Up";
+            readyButton.GetComponentInChildren<TMP_Text>().text = "Ready Up";
         }
+
+        
+    }
+
+
+    public void Start()
+    {
+        ResetReadyButton();
+    }
+    public void ResetReadyButton()
+    {
+
+            if (gameObject.name != "LocalLobbyPlayer")
+            {
+            readyButton.gameObject.SetActive(false);
+            Debug.Log("Hello I Got Called :)))))");
+            }
+        
     }
 
     [Command]
@@ -155,6 +174,7 @@ public class LobbyPlayerScript : NetworkBehaviour
         if (!PlayerLobyUI.activeInHierarchy)
             PlayerLobyUI.SetActive(true);
         gameObject.name = "LocalLobbyPlayer";
+        ResetReadyButton();
     }
     [Command]
     private void CmdSetPlayerName(string playerName)
