@@ -43,6 +43,11 @@ public class LobbyUIManager : MonoBehaviour
             instance = this;
     }
 
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
+
     public void StartGame()
     {
         //SceneManager.LoadScene("Gameplay");
