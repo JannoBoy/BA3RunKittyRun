@@ -82,6 +82,24 @@ public class LobbyPlayerScript : NetworkBehaviour
         {
             Debug.Log("Player2 Ready Panel not activated. Player count: " + Game.LobbyPlayers.Count().ToString());
         }
+        if (Game.LobbyPlayers.Count() > 2)
+        {
+            Player3ReadyPanel.SetActive(true);
+            Debug.Log("Player3 Ready Panel activated");
+        }
+        else
+        {
+            Debug.Log("Player3 Ready Panel not activated. Player count: " + Game.LobbyPlayers.Count().ToString());
+        }
+        if (Game.LobbyPlayers.Count() > 3)
+        {
+            Player4ReadyPanel.SetActive(true);
+            Debug.Log("Player4 Ready Panel activated");
+        }
+        else
+        {
+            Debug.Log("Player4 Ready Panel not activated. Player count: " + Game.LobbyPlayers.Count().ToString());
+        }
         UpdatePlayerReadyText();
     }
 
