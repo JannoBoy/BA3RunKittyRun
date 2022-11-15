@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using UnityEngine;
 
 namespace Mirror
@@ -10,11 +9,6 @@ namespace Mirror
     // but they do all need to be extensions.
     public static class NetworkReaderExtensions
     {
-        // cache encoding instead of creating it each time
-        // 1000 readers before:  1MB GC, 30ms
-        // 1000 readers after: 0.8MB GC, 18ms
-        static readonly UTF8Encoding encoding = new UTF8Encoding(false, true);
-
         public static byte ReadByte(this NetworkReader reader) => reader.ReadBlittable<byte>();
         public static byte? ReadByteNullable(this NetworkReader reader) => reader.ReadBlittableNullable<byte>();
 
@@ -81,7 +75,9 @@ namespace Mirror
             ArraySegment<byte> data = reader.ReadBytesSegment(realSize);
 
             // convert directly from buffer to string via encoding
-            return encoding.GetString(data.Array, data.Offset, data.Count);
+            // throws in case of invalid utf8.
+            // see test: ReadString_InvalidUTF8()
+            return reader.encoding.GetString(data.Array, data.Offset, data.Count);
         }
 
         /// <exception cref="T:OverflowException">if count is invalid</exception>
@@ -144,11 +140,15 @@ namespace Mirror
         public static Ray ReadRay(this NetworkReader reader) => reader.ReadBlittable<Ray>();
         public static Ray? ReadRayNullable(this NetworkReader reader) => reader.ReadBlittableNullable<Ray>();
 
-        public static Matrix4x4 ReadMatrix4x4(this NetworkReader reader)=> reader.ReadBlittable<Matrix4x4>();
+        public static Matrix4x4 ReadMatrix4x4(this NetworkReader reader) => reader.ReadBlittable<Matrix4x4>();
         public static Matrix4x4? ReadMatrix4x4Nullable(this NetworkReader reader) => reader.ReadBlittableNullable<Matrix4x4>();
 
         public static Guid ReadGuid(this NetworkReader reader)
         {
+#if !UNITY_2021_3_OR_NEWER
+            // Unity 2019 doesn't have Span yet
+            return new Guid(reader.ReadBytes(16));
+#else
             // ReadBlittable(Guid) isn't safe. see ReadBlittable comments.
             // Guid is Sequential, but we can't guarantee packing.
             if (reader.Remaining >= 16)
@@ -158,6 +158,7 @@ namespace Mirror
                 return new Guid(span);
             }
             throw new EndOfStreamException($"ReadGuid out of range: {reader}");
+#endif
         }
         public static Guid? ReadGuidNullable(this NetworkReader reader) => reader.ReadBool() ? ReadGuid(reader) : default(Guid?);
 
@@ -198,8 +199,8 @@ namespace Mirror
             NetworkIdentity identity = Utils.GetSpawnedInServerOrClient(netId);
 
             return identity != null
-                   ? identity.NetworkBehaviours[componentIndex]
-                   : null;
+                ? identity.NetworkBehaviours[componentIndex]
+                : null;
         }
 
         public static T ReadNetworkBehaviour<T>(this NetworkReader reader) where T : NetworkBehaviour
@@ -207,7 +208,7 @@ namespace Mirror
             return reader.ReadNetworkBehaviour() as T;
         }
 
-        public static NetworkBehaviour.NetworkBehaviourSyncVar ReadNetworkBehaviourSyncVar(this NetworkReader reader)
+        public static NetworkBehaviourSyncVar ReadNetworkBehaviourSyncVar(this NetworkReader reader)
         {
             uint netId = reader.ReadUInt();
             byte componentIndex = default;
@@ -218,7 +219,7 @@ namespace Mirror
                 componentIndex = reader.ReadByte();
             }
 
-            return new NetworkBehaviour.NetworkBehaviourSyncVar(netId, componentIndex);
+            return new NetworkBehaviourSyncVar(netId, componentIndex);
         }
 
         public static Transform ReadTransform(this NetworkReader reader)
@@ -261,7 +262,7 @@ namespace Mirror
             // this assumes that a reader for T reads at least 1 bytes
             // we can't know the exact size of T because it could have a user created reader
             // NOTE: don't add to length as it could overflow if value is int.max
-            if (length > reader.Length - reader.Position)
+            if (length > reader.Remaining)
             {
                 throw new EndOfStreamException($"Received array that is too large: {length}");
             }

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
 using UnityEngine;
 
 namespace Mirror
@@ -10,12 +9,6 @@ namespace Mirror
     // but they do all need to be extensions.
     public static class NetworkWriterExtensions
     {
-        // cache encoding instead of creating it with BinaryWriter each time
-        // 1000 readers before:  1MB GC, 30ms
-        // 1000 readers after: 0.8MB GC, 18ms
-        static readonly UTF8Encoding encoding = new UTF8Encoding(false, true);
-        static readonly byte[] stringBuffer = new byte[NetworkWriter.MaxStringLength];
-
         public static void WriteByte(this NetworkWriter writer, byte value) => writer.WriteBlittable(value);
         public static void WriteByteNullable(this NetworkWriter writer, byte? value) => writer.WriteBlittableNullable(value);
 
@@ -87,19 +80,25 @@ namespace Mirror
                 return;
             }
 
-            // write string with same method as NetworkReader
-            // convert to byte[]
-            int size = encoding.GetBytes(value, 0, value.Length, stringBuffer, 0);
+            // WriteString copies into the buffer manually.
+            // need to ensure capacity here first, manually.
+            int maxSize = writer.encoding.GetMaxByteCount(value.Length);
+            writer.EnsureCapacity(writer.Position + 2 + maxSize); // 2 bytes position + N bytes encoding
+
+            // encode it into the buffer first.
+            // reserve 2 bytes for header after we know how much was written.
+            int written = writer.encoding.GetBytes(value, 0, value.Length, writer.buffer, writer.Position + 2);
 
             // check if within max size
-            if (size >= NetworkWriter.MaxStringLength)
-            {
-                throw new IndexOutOfRangeException($"NetworkWriter.Write(string) too long: {size}. Limit: {NetworkWriter.MaxStringLength}");
-            }
+            if (written >= NetworkWriter.MaxStringLength)
+                throw new IndexOutOfRangeException($"NetworkWriter.Write(string) too long: {written}. Limit: {NetworkWriter.MaxStringLength}");
 
-            // write size and bytes
-            writer.WriteUShort(checked((ushort)(size + 1)));
-            writer.WriteBytes(stringBuffer, 0, size);
+            // .Position is unchanged, so fill in the size header now.
+            // we already ensured that max size fits into ushort.max-1.
+            writer.WriteUShort(checked((ushort)(written + 1))); // Position += 2
+
+            // now update position by what was written above
+            writer.Position += written;
         }
 
         public static void WriteBytesAndSizeSegment(this NetworkWriter writer, ArraySegment<byte> buffer)
@@ -181,12 +180,18 @@ namespace Mirror
 
         public static void WriteGuid(this NetworkWriter writer, Guid value)
         {
+#if !UNITY_2021_3_OR_NEWER
+            // Unity 2019 doesn't have Span yet
+            byte[] data = value.ToByteArray();
+            writer.WriteBytes(data, 0, data.Length);
+#else
             // WriteBlittable(Guid) isn't safe. see WriteBlittable comments.
             // Guid is Sequential, but we can't guarantee packing.
             // TryWriteBytes is safe and allocation free.
             writer.EnsureCapacity(writer.Position + 16);
             value.TryWriteBytes(new Span<byte>(writer.buffer, writer.Position, 16));
             writer.Position += 16;
+#endif
         }
         public static void WriteGuidNullable(this NetworkWriter writer, Guid? value)
         {
@@ -224,7 +229,7 @@ namespace Mirror
                 return;
             }
             writer.WriteUInt(value.netId);
-            writer.WriteByte((byte)value.ComponentIndex);
+            writer.WriteByte(value.ComponentIndex);
         }
 
         public static void WriteTransform(this NetworkWriter writer, Transform value)
