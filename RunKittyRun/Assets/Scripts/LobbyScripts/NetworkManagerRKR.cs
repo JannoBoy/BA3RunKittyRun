@@ -53,4 +53,60 @@ public class NetworkManagerRKR : NetworkManager
         }
     }
 
+    private bool CanStartGame()
+    {
+        if (numPlayers < minPlayers)
+            return false;
+        foreach (LobbyPlayerScript player in LobbyPlayers)
+        {
+            if (!player.IsReady)
+                return false;
+        }
+        return true;
+    }
+
+    public void StartGame()
+    {
+        if (CanStartGame() && SceneManager.GetActiveScene().name == "TitleScreen")
+        {
+            ServerChangeScene("Gameplay");
+        }
+    }
+
+    public override void ServerChangeScene(string newSceneName)
+    {
+        //Changing from the menu to the scene
+        if (SceneManager.GetActiveScene().name == "TitleScreen" && newSceneName == "Gameplay") //YOOO PUT GAMEPLAY SCENE HERE
+        {
+            for (int i = LobbyPlayers.Count - 1; i >= 0; i--)
+            {
+                var conn = LobbyPlayers[i].connectionToClient;
+                var gamePlayerInstance = Instantiate(gamePlayerPrefab);
+
+                gamePlayerInstance.SetPlayerName(LobbyPlayers[i].PlayerName);
+                gamePlayerInstance.SetConnectionId(LobbyPlayers[i].ConnectionId);
+
+                NetworkServer.Destroy(conn.identity.gameObject);
+                NetworkServer.ReplacePlayerForConnection(conn, gamePlayerInstance.gameObject, true);
+            }
+        }
+        base.ServerChangeScene(newSceneName);
+    }
+
+    public override void OnServerDisconnect(NetworkConnectionToClient conn)
+    {
+        if (conn.identity != null)
+        {
+            LobbyPlayerScript player = conn.identity.GetComponent<LobbyPlayerScript>();
+            LobbyPlayers.Remove(player);
+        }
+        base.OnServerDisconnect(conn);
+    }
+
+    public override void OnStopServer()
+    {
+        LobbyPlayers.Clear();
+    }
+
+
 }
