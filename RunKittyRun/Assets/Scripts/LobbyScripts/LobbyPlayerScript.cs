@@ -295,7 +295,7 @@ public class LobbyPlayerScript : NetworkBehaviour
         Debug.Log("Removed player from the GamePlayer list: " + this.PlayerName);
     }
 
-    [Command]
+    //[Command]
     public void CmdStartGame()
     {
         Game.StartGame();

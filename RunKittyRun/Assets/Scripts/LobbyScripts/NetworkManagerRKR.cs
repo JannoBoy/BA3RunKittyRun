@@ -7,7 +7,7 @@ using System.Linq;
 using UnityEngine.SceneManagement;
 public class NetworkManagerRKR : NetworkManager
 {
-    [SerializeField] public int minPlayers = 2;
+    [SerializeField] public int minPlayers = 1;
     [SerializeField] private LobbyPlayerScript lobbyPlayerPrefab;
     [SerializeField] private GamePlayerScript gamePlayerPrefab;
 
@@ -58,27 +58,32 @@ public class NetworkManagerRKR : NetworkManager
     private bool CanStartGame()
     {
         if (numPlayers < minPlayers)
+        {
             return false;
+        }
         foreach (LobbyPlayerScript player in LobbyPlayers)
         {
             if (!player.IsReady)
+            {
                 return false;
+            }
         }
+        Debug.Log("Try start game");
         return true;
     }
 
     public void StartGame()
     {
-        if (CanStartGame() && SceneManager.GetActiveScene().name == "TitleScreen")
+        if (CanStartGame() && SceneManager.GetActiveScene().name == "LobbyScene")
         {
-            ServerChangeScene("Gameplay");
+            ServerChangeScene("SampleScene"); //YOOO PUT GAMEPLAY SCENE HERE
         }
     }
 
     public override void ServerChangeScene(string newSceneName)
     {
         //Changing from the menu to the scene
-        if (SceneManager.GetActiveScene().name == "TitleScreen" && newSceneName == "Gameplay") //YOOO PUT GAMEPLAY SCENE HERE
+        if (SceneManager.GetActiveScene().name == "LobbyScene" && newSceneName == "SampleScene") //YOOO PUT GAMEPLAY SCENE HERE
         {
             for (int i = LobbyPlayers.Count - 1; i >= 0; i--)
             {

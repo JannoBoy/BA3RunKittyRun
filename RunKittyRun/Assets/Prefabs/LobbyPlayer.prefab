@@ -924,9 +924,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneId: 0
+  _assetId: 250605987
   serverOnly: 0
   visible: 0
-  m_AssetId: 3f7105bf02619274aa1358cbd7e5b268
   hasSpawned: 0
 --- !u!114 &7511195095874015176
 MonoBehaviour:
@@ -940,6 +940,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a35a35058ceb4f49afde7462cce92c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
   PlayerLobyUI: {fileID: 4807385078284397119}
@@ -965,6 +966,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e88ef3e17b50e7241982fcfe356fd812, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
   chatUI: {fileID: 4822777448880646926}
@@ -2504,7 +2506,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &178449220477781308
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2607,7 +2609,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6403712607623864178}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7511195095874015176}
+        m_TargetAssemblyTypeName: LobbyPlayerScript, Assembly-CSharp
+        m_MethodName: CmdStartGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &6717390591994348321
 GameObject:
   m_ObjectHideFlags: 0
