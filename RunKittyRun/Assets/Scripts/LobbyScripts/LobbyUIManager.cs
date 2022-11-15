@@ -26,6 +26,7 @@ public class LobbyUIManager : MonoBehaviour
     [Header("Misc. UI")]
     [SerializeField] private Button returnToMainMenu;
 
+
     private const string PlayerPrefsNameKey = "Player Name";
 
     public void ReturnToMainMenu()
@@ -70,7 +71,8 @@ public class LobbyUIManager : MonoBehaviour
         {
             playerName = playerNameInputField.text;
             PlayerPrefs.SetString(PlayerPrefsNameKey, playerName);
-            shownPlayerName.text = "Choosen Name: " + PlayerPrefsNameKey.ToString();
+            networkManager.myName = playerNameInputField.text;
+            shownPlayerName.text = "Choosen Name: " + playerNameInputField.text;
         }
     }
 

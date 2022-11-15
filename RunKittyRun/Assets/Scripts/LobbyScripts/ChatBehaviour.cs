@@ -21,6 +21,19 @@ public class ChatBehaviour : NetworkBehaviour
 
     private static event Action<string> OnMessage;
 
+    private NetworkManagerRKR game;
+    private NetworkManagerRKR Game
+    {
+        get
+        {
+            if (game != null)
+            {
+                return game;
+            }
+            return game = NetworkManagerRKR.singleton as NetworkManagerRKR;
+        }
+    }
+
     public override void OnStartAuthority()
     {
         chatUI.SetActive(true);
@@ -77,7 +90,7 @@ public class ChatBehaviour : NetworkBehaviour
     [Command]
     private void CmdSendMessage(string message)
     {
-        RpcHandleMessage($"[{connectionToClient.connectionId}]: {message}");
+        RpcHandleMessage($"[{Game.myName}]: {message}");
     }
 
     [ClientRpc]

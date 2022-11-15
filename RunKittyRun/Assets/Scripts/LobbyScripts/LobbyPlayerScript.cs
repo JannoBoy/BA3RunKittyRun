@@ -111,8 +111,8 @@ public class LobbyPlayerScript : NetworkBehaviour
             foreach (Transform childText in Player1ReadyPanel.transform)
             {
                 if (childText.name == "Player1Name")
-                    childText.GetComponent<TMP_Text>().text = "Test";
-                    //childText.GetComponent<Text>().text = Game.LobbyPlayers[0].PlayerName;
+                    childText.GetComponent<TMP_Text>().text = Game.LobbyPlayers[0].PlayerName;
+                //childText.GetComponent<Text>().text = Game.LobbyPlayers[0].PlayerName;
                 if (childText.name == "Player1ReadyText")
                 {
                     bool isPlayerReady = Game.LobbyPlayers[0].IsReady;
@@ -230,12 +230,13 @@ public class LobbyPlayerScript : NetworkBehaviour
     public void CmdReadyUp()
     {
         IsReady = !IsReady;
+        CheckIfAllPlayersAreReady();
         Debug.Log("Ready status changed for: " + PlayerName);
     }
 
     public override void OnStartAuthority()
     {
-        CmdSetPlayerName(PlayerPrefs.GetString("PlayerPrefsNameKey", "Error"));
+        CmdSetPlayerName(Game.myName);
         if (!PlayerLobyUI.activeInHierarchy)
             PlayerLobyUI.SetActive(true);
         gameObject.name = "LocalLobbyPlayer";

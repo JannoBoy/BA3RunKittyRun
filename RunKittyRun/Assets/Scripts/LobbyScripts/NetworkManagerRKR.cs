@@ -10,6 +10,8 @@ public class NetworkManagerRKR : NetworkManager
     [SerializeField] public int minPlayers = 2;
     [SerializeField] private LobbyPlayerScript lobbyPlayerPrefab;
     [SerializeField] private GamePlayerScript gamePlayerPrefab;
+
+    public string myName;
     public List<LobbyPlayerScript> LobbyPlayers { get; } = new List<LobbyPlayerScript>();
     public List<GamePlayerScript> GamePlayers { get; } = new List<GamePlayerScript>();
 
