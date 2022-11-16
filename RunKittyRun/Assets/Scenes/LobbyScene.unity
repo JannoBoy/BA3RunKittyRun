@@ -1984,6 +1984,7 @@ MonoBehaviour:
   lobbyPlayerPrefab: {fileID: 7511195095874015176, guid: 3f7105bf02619274aa1358cbd7e5b268, type: 3}
   gamePlayerPrefab: {fileID: 8676848861735044649, guid: 61d38367f1f26ba4a81a1cba2a2b078c, type: 3}
   myName: 
+  myLobbyNumber: 0
 --- !u!1 &899613667
 GameObject:
   m_ObjectHideFlags: 0

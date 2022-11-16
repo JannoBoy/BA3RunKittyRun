@@ -5,24 +5,14 @@ using Cinemachine;
 
 public class CameraScript : MonoBehaviour
 {
-    CinemachineVirtualCamera vc;
     bool gotPlayer;
     Transform player;
     // Start is called before the first frame update
     void Start()
     {
-        vc = GetComponent<CinemachineVirtualCamera>();
 
         player = GameObject.Find("LocalGamePlayer").transform;
-        vc.LookAt = GameObject.Find("LocalGamePlayer").transform;
-        if(vc.Follow == null)
-        {
-            gotPlayer = false;
-        }
-        else
-        {
-            gotPlayer = true;
-        }
+
     }
 
     // Update is called once per frame

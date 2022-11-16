@@ -13,6 +13,8 @@ public class NetworkManagerRKR : NetworkManager
 
     public string myName;
 
+    public Vector3 mySpawn = Vector3.zero;
+
     public int myLobbyNumber;
     public List<LobbyPlayerScript> LobbyPlayers { get; } = new List<LobbyPlayerScript>();
     public List<GamePlayerScript> GamePlayers { get; } = new List<GamePlayerScript>();

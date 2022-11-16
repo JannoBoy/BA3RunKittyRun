@@ -9,6 +9,9 @@ public class GamePlayerScript : NetworkBehaviour
 {
     [SyncVar] public string PlayerName;
     [SyncVar] public int ConnectionId;
+    [SyncVar] public bool reachedGoal;
+
+    int spawnNumber = 0;
 
     private NetworkManagerRKR game;
     private NetworkManagerRKR Game
@@ -23,21 +26,22 @@ public class GamePlayerScript : NetworkBehaviour
         }
     }
 
-    private Vector3 MySpawnPoint(int me)
+
+    private Vector3 MySpawnPoint(int myNumb)
     {
-        if(me == 0)
+        if(myNumb == 0)
         {
             return new Vector3(-66, 1, 58);
         }
-        else if (me == 1)
+        else if (myNumb == 1)
         {
             return new Vector3(-66, 1, 66);
         }
-        else if (me == 2)
+        else if (myNumb == 2)
         {
             return new Vector3(-60, 1, 66);
         }
-        else if (me == 3)
+        else if (myNumb == 3)
         {
             return new Vector3(-60, 1, 58);
         }
@@ -54,9 +58,9 @@ public class GamePlayerScript : NetworkBehaviour
     {
         DontDestroyOnLoad(gameObject);
         Game.GamePlayers.Add(this);
-       // transform.position = MySpawnPoint(Game.GamePlayers.);
-        ClickToMoveScript myMove = GetComponent<ClickToMoveScript>();
-        myMove.CheckForNavMesh();
+        SetSpawnPoint();
+            //transform.position = MySpawnPoint(); 
+
         Debug.Log("Added to GamePlayer list: " + this.PlayerName);
     }
     public override void OnStopClient()
@@ -65,6 +69,7 @@ public class GamePlayerScript : NetworkBehaviour
         Game.GamePlayers.Remove(this);
         Debug.Log("Removed player from the GamePlayer list: " + this.PlayerName);
     }
+
     [Server]
     public void SetPlayerName(string playerName)
     {
@@ -74,5 +79,14 @@ public class GamePlayerScript : NetworkBehaviour
     public void SetConnectionId(int connId)
     {
         this.ConnectionId = connId;
+    }
+    [Server]
+    public void SetSpawnPoint()
+    {
+        foreach(GamePlayerScript player in Game.GamePlayers)
+        {
+            player.gameObject.transform.position = MySpawnPoint(spawnNumber);
+            spawnNumber++;
+        }
     }
 }

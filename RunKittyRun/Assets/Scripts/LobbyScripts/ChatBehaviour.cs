@@ -73,7 +73,7 @@ public class ChatBehaviour : NetworkBehaviour
     [Client]
     public void Send(string message)
     {
-        CmdSendMessage(inputField.text);
+        CmdSendMessage(inputField.text, Game.myName);
         Debug.Log("Hello message");
         inputField.text = string.Empty;
     }
@@ -82,15 +82,15 @@ public class ChatBehaviour : NetworkBehaviour
     public void SendServer(string message)
     {
         //string myMessage = ($"[{connectionToClient.connectionId}]: {inputField.text}");
-        CmdSendMessage(inputField.text);
+        CmdSendMessage(inputField.text, Game.myName);
         //chatText.text += ($"\n{myMessage}");
         inputField.text = string.Empty;
     }
 
     [Command]
-    private void CmdSendMessage(string message)
+    private void CmdSendMessage(string message, string name)
     {
-        RpcHandleMessage($"[{Game.myName}]: {message}");
+        RpcHandleMessage($"[{name}]: {message}");
     }
 
     [ClientRpc]

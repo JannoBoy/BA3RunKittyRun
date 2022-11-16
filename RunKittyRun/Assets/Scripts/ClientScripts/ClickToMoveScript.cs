@@ -7,9 +7,22 @@ using Mirror;
 public class ClickToMoveScript : NetworkBehaviour
 {
     NavMeshAgent navMeshAgent;
-    bool cMoving;
+    bool cMoving, firstclick = true;
     NetworkIdentity myIdentity;
     Camera myCam;
+
+    private NetworkManagerRKR game;
+    private NetworkManagerRKR Game
+    {
+        get
+        {
+            if (game != null)
+            {
+                return game;
+            }
+            return game = NetworkManagerRKR.singleton as NetworkManagerRKR;
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -27,11 +40,11 @@ public class ClickToMoveScript : NetworkBehaviour
     void Update()
     {
         //placeholder
-        if (Input.GetMouseButton(0) && myIdentity.hasAuthority)
+        if (Input.GetMouseButton(0) && isOwned)
         {
             SelectNewPosition();
         }
-        if (Input.GetKeyDown(KeyCode.S) && myIdentity.hasAuthority)
+        if (Input.GetKeyDown(KeyCode.S) && isOwned)
         {
             SelectNewPosition();
         }
@@ -40,6 +53,11 @@ public class ClickToMoveScript : NetworkBehaviour
 
     void SelectNewPosition()
     {
+        if (firstclick)
+        {
+            Game.mySpawn = transform.position;
+            firstclick = false;
+        }
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
