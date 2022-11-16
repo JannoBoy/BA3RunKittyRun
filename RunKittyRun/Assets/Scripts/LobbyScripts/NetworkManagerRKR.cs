@@ -7,11 +7,15 @@ using System.Linq;
 using UnityEngine.SceneManagement;
 public class NetworkManagerRKR : NetworkManager
 {
-    [SerializeField] public int minPlayers = 2;
+    [SerializeField] public int minPlayers = 1;
     [SerializeField] private LobbyPlayerScript lobbyPlayerPrefab;
     [SerializeField] private GamePlayerScript gamePlayerPrefab;
 
     public string myName;
+
+    public Vector3 mySpawn = Vector3.zero;
+
+    public int myLobbyNumber;
     public List<LobbyPlayerScript> LobbyPlayers { get; } = new List<LobbyPlayerScript>();
     public List<GamePlayerScript> GamePlayers { get; } = new List<GamePlayerScript>();
 
@@ -36,6 +40,7 @@ public class NetworkManagerRKR : NetworkManager
             return;
         }
         Debug.Log("Server Connected");
+        myLobbyNumber = LobbyPlayers.Count;
     }
 
     public override void OnServerAddPlayer(NetworkConnectionToClient conn)
@@ -44,7 +49,6 @@ public class NetworkManagerRKR : NetworkManager
         if (SceneManager.GetActiveScene().name == "LobbyScene")
         {
             bool isGameLeader = LobbyPlayers.Count == 0; // isLeader is true if the player count is 0, aka when you are the first player to be added to a server/room
-
             LobbyPlayerScript lobbyPlayerInstance = Instantiate(lobbyPlayerPrefab);
 
             lobbyPlayerInstance.IsGameLeader = isGameLeader;
@@ -58,27 +62,32 @@ public class NetworkManagerRKR : NetworkManager
     private bool CanStartGame()
     {
         if (numPlayers < minPlayers)
+        {
             return false;
+        }
         foreach (LobbyPlayerScript player in LobbyPlayers)
         {
             if (!player.IsReady)
+            {
                 return false;
+            }
         }
+        Debug.Log("Try start game");
         return true;
     }
 
     public void StartGame()
     {
-        if (CanStartGame() && SceneManager.GetActiveScene().name == "TitleScreen")
+        if (CanStartGame() && SceneManager.GetActiveScene().name == "LobbyScene")
         {
-            ServerChangeScene("Gameplay");
+            ServerChangeScene("SampleScene"); //YOOO PUT GAMEPLAY SCENE HERE
         }
     }
 
     public override void ServerChangeScene(string newSceneName)
     {
         //Changing from the menu to the scene
-        if (SceneManager.GetActiveScene().name == "TitleScreen" && newSceneName == "Gameplay") //YOOO PUT GAMEPLAY SCENE HERE
+        if (SceneManager.GetActiveScene().name == "LobbyScene" && newSceneName == "SampleScene") //YOOO PUT GAMEPLAY SCENE HERE
         {
             for (int i = LobbyPlayers.Count - 1; i >= 0; i--)
             {

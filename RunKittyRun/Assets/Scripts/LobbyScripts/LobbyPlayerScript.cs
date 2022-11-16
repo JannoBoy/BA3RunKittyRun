@@ -116,6 +116,7 @@ public class LobbyPlayerScript : NetworkBehaviour
                 if (childText.name == "Player1ReadyText")
                 {
                     bool isPlayerReady = Game.LobbyPlayers[0].IsReady;
+                    Game.myLobbyNumber = 0;
                     if (isPlayerReady)
                     {
                         childText.GetComponent<TMP_Text>().text = "Ready";
@@ -138,6 +139,7 @@ public class LobbyPlayerScript : NetworkBehaviour
                 if (childText.name == "Player2ReadyText")
                 {
                     bool isPlayerReady = Game.LobbyPlayers[1].IsReady;
+                    Game.myLobbyNumber = 1;
                     if (isPlayerReady)
                     {
                         childText.GetComponent<TMP_Text>().text = "Ready";
@@ -160,6 +162,7 @@ public class LobbyPlayerScript : NetworkBehaviour
                     childText.GetComponent<TMP_Text>().text = Game.LobbyPlayers[2].PlayerName;
                 if (childText.name == "Player3ReadyText")
                 {
+                    Game.myLobbyNumber = 2;
                     bool isPlayerReady = Game.LobbyPlayers[2].IsReady;
                     if (isPlayerReady)
                     {
@@ -183,6 +186,7 @@ public class LobbyPlayerScript : NetworkBehaviour
                     childText.GetComponent<TMP_Text>().text = Game.LobbyPlayers[3].PlayerName;
                 if (childText.name == "Player4ReadyText")
                 {
+                    Game.myLobbyNumber = 3;
                     bool isPlayerReady = Game.LobbyPlayers[3].IsReady;
                     if (isPlayerReady)
                     {
@@ -221,7 +225,6 @@ public class LobbyPlayerScript : NetworkBehaviour
             if (gameObject.name != "LocalLobbyPlayer")
             {
             readyButton.gameObject.SetActive(false);
-            Debug.Log("Hello I Got Called :)))))");
             }
         
     }
@@ -295,7 +298,7 @@ public class LobbyPlayerScript : NetworkBehaviour
         Debug.Log("Removed player from the GamePlayer list: " + this.PlayerName);
     }
 
-    [Command]
+    //[Command]
     public void CmdStartGame()
     {
         Game.StartGame();
@@ -320,8 +323,8 @@ public class LobbyPlayerScript : NetworkBehaviour
 
     private void OnDestroy()
     {
-        if (hasAuthority)
-            LobbyUIManager.instance.ReturnToMainMenu();
+        //if (isOwned)
+          //  LobbyUIManager.instance.ReturnToMainMenu();
     }
 
 }
