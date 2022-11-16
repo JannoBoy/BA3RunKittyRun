@@ -22,6 +22,29 @@ public class GamePlayerScript : NetworkBehaviour
             return game = NetworkManagerRKR.singleton as NetworkManagerRKR;
         }
     }
+
+    private Vector3 MySpawnPoint(int me)
+    {
+        if(me == 0)
+        {
+            return new Vector3(-66, 1, 58);
+        }
+        else if (me == 1)
+        {
+            return new Vector3(-66, 1, 66);
+        }
+        else if (me == 2)
+        {
+            return new Vector3(-60, 1, 66);
+        }
+        else if (me == 3)
+        {
+            return new Vector3(-60, 1, 58);
+        }
+
+        return new Vector3(-66, 1, 50);
+    }
+
     public override void OnStartAuthority()
     {
         gameObject.name = "LocalGamePlayer";
@@ -31,7 +54,9 @@ public class GamePlayerScript : NetworkBehaviour
     {
         DontDestroyOnLoad(gameObject);
         Game.GamePlayers.Add(this);
-        transform.position = new Vector3(-20, 4, 18);
+       // transform.position = MySpawnPoint(Game.GamePlayers.);
+        ClickToMoveScript myMove = GetComponent<ClickToMoveScript>();
+        myMove.CheckForNavMesh();
         Debug.Log("Added to GamePlayer list: " + this.PlayerName);
     }
     public override void OnStopClient()

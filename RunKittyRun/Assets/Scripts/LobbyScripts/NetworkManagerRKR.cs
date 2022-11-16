@@ -12,6 +12,8 @@ public class NetworkManagerRKR : NetworkManager
     [SerializeField] private GamePlayerScript gamePlayerPrefab;
 
     public string myName;
+
+    public int myLobbyNumber;
     public List<LobbyPlayerScript> LobbyPlayers { get; } = new List<LobbyPlayerScript>();
     public List<GamePlayerScript> GamePlayers { get; } = new List<GamePlayerScript>();
 
@@ -36,6 +38,7 @@ public class NetworkManagerRKR : NetworkManager
             return;
         }
         Debug.Log("Server Connected");
+        myLobbyNumber = LobbyPlayers.Count;
     }
 
     public override void OnServerAddPlayer(NetworkConnectionToClient conn)
@@ -44,7 +47,6 @@ public class NetworkManagerRKR : NetworkManager
         if (SceneManager.GetActiveScene().name == "LobbyScene")
         {
             bool isGameLeader = LobbyPlayers.Count == 0; // isLeader is true if the player count is 0, aka when you are the first player to be added to a server/room
-
             LobbyPlayerScript lobbyPlayerInstance = Instantiate(lobbyPlayerPrefab);
 
             lobbyPlayerInstance.IsGameLeader = isGameLeader;
