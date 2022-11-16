@@ -31,7 +31,7 @@ public class GamePlayerScript : NetworkBehaviour
     {
         DontDestroyOnLoad(gameObject);
         Game.GamePlayers.Add(this);
-        transform.position = new Vector3(-20, 3, 21);
+        transform.position = new Vector3(-20, 4, 18);
         Debug.Log("Added to GamePlayer list: " + this.PlayerName);
     }
     public override void OnStopClient()
