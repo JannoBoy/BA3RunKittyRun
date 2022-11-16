@@ -4,56 +4,56 @@ using Mirror;
 
 public class PlayerMovement : NetworkBehaviour
 {
-    [SerializeField] private CharacterController controller; // CharacterController.
-    [SerializeField] private float speed = 6f; // Hız için parametre.
-    [SerializeField] private float jumpSpeed = 15f; // Zıplama için parametre.
-    [SerializeField] private float turnSmoothTime = 0.1f; // Dönüşü smoothlaştırmak için parametre.
+    [SerializeField] private CharacterController controller; 
+    [SerializeField] private float speed = 6f; 
+    [SerializeField] private float jumpSpeed = 15f; 
+    [SerializeField] private float turnSmoothTime = 0.1f; 
 
-    private float turnSmoothVelocity; // Ellememize gerek yok referans için bulunuyor.
-    private float gravity = -20f; // Default değer.
-    private float tempDirectionY = 0; // Temp Y değeri.
+    private float turnSmoothVelocity; 
+    private float gravity = -20f; 
+    private float tempDirectionY = 0; 
 
     void Update()
     {
-        HandleMovement(); // Tüm hareketi ve zıplamayı hallettiğimiz fonksiyon.
-        HandleCrouch(); // Tüm eğilme hallettiğimiz fonksiyon.
+        HandleMovement(); 
+        HandleCrouch();
     }
 
     private void HandleCrouch()
     {
-        if (!isLocalPlayer) return; // Eğer biz değilsek eğilme.
+        if (!isLocalPlayer) return;
 
-        if(Input.GetKey(KeyCode.LeftControl)) // CTRL'e basılınca
+        if(Input.GetKey(KeyCode.LeftControl))
         {
-            transform.localScale = new Vector3(1f, 0.5f, 1f); // Karakteri 0.5 scale'ine düşürür.
+            transform.localScale = new Vector3(1f, 0.5f, 1f); 
         }
         else
         {
-            transform.localScale = new Vector3(1f, 1f, 1f); // Karakteri 1 scale'ine yükseltir.
+            transform.localScale = new Vector3(1f, 1f, 1f); 
         }
     }
     private void HandleMovement()
     {
-        if (!isLocalPlayer) return; // Eğer biz değilsek hareket ettirme.
+        if (!isLocalPlayer) return; 
 
-        float horizontal = Input.GetAxisRaw("Horizontal"); // X input.
-        float vertical = Input.GetAxisRaw("Vertical"); // Z input.
+        float horizontal = Input.GetAxisRaw("Horizontal"); 
+        float vertical = Input.GetAxisRaw("Vertical"); 
 
-        Vector3 direction = new Vector3(horizontal, 0, vertical); // Hareket yönü.
+        Vector3 direction = new Vector3(horizontal, 0, vertical); 
         
-        if (controller.isGrounded) // Eğer yerdeysek.
+        if (controller.isGrounded) 
         {
-            if (Input.GetButtonDown("Jump")) // Zıplama tuşuna basıldıysa.
+            if (Input.GetButtonDown("Jump")) 
             {
-                tempDirectionY = jumpSpeed; // Y ekseninde zıplama hızı ekliyoruz.
+                tempDirectionY = jumpSpeed;
             }
         }
         
-        // Yerçekimi ekliyoruz.
+        
         tempDirectionY += gravity * Time.deltaTime;
 
         direction.y = tempDirectionY;
         
-        controller.Move(direction * speed * Time.deltaTime); // CharacterController'ımıza bilgileri aktarıp hareket ettiriyoruz.
+        controller.Move(direction * speed * Time.deltaTime);
     }
 }
