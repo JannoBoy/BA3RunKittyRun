@@ -42,7 +42,7 @@ public class GoalScript : NetworkBehaviour
 
     private void CheckForDone()
     {
-        if (nrInGoal == Game.GamePlayers.Count)
+        if (nrInGoal == Game.GamePlayers.Count - 1)
         {
             string lastName = "last";
             foreach(GamePlayerScript player in Game.GamePlayers)
@@ -54,7 +54,7 @@ public class GoalScript : NetworkBehaviour
 
 
             }
-            wtxt.text += ("#" + nrInGoal + 1 + "  " + lastName + "\n");
+            wtxt.text += ("#" + (nrInGoal + 1) + "  " + lastName + "\n");
             wUItxt.text = wtxt.text;
             doneUi.SetActive(true);
         }
