@@ -27,7 +27,12 @@ public class PlayerContactScript : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        navMeshAgent = GetComponent<NavMeshAgent>();
+        myIdentity = GetComponent<NetworkIdentity>();
+        if (!myIdentity.hasAuthority)
+        {
+            // myCam.gameObject.SetActive(false);
+        }
     }
 
     // Update is called once per frame
@@ -38,7 +43,7 @@ public class PlayerContactScript : NetworkBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.tag == "NPC")
+        if (collision.gameObject.tag == "NPC"&& isOwned)
         {
             killPlayer(collision.gameObject.GetComponent<NPCScript>().Levelno);
 

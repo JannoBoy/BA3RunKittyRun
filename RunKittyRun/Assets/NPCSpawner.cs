@@ -14,7 +14,7 @@ public class NPCSpawner : MonoBehaviour
     private float[] Level6 = { 26.5f, 24f, 45.4f, -17.7f };
     private float[] Level7 = { 23.6f, -20.5f, -21.2f, -36f };
     private float[] Level8 = { -23.4f, -17.7f, -37.1f, 5.6f };
-    private int[] NumberOfNPCs = { 5, 5, 5, 5, 5, 5, 5, 5 };
+    private int[] NumberOfNPCs = { 10, 15, 10, 10, 10, 10, 5, 5 };
     public int[] NumberOfChasers = { 0, 0, 0, 0, 1, 2, 3, 4 };
   
 
